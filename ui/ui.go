@@ -104,10 +104,86 @@ func (m *Monitor) Loading(loadCH <-chan bool) {
 	}
 }
 
+<<<<<<< HEAD
 // CreateInput will print an input screen for entering a bitcoin address
 func (m *Monitor) CreateInput(label string) {
 	m.Input.
 		SetLabel("Input[" + label + "]: ").
+=======
+// writeError will pretty print the error to the logs view
+func (t *Terminal) writeError(err error) {
+	t.app.QueueUpdateDraw(func() {
+		t.logsView.SetText(fmt.Sprintf("Error: %v", err)).SetBackgroundColor(tcell.ColorDefault)
+	})
+	return
+}
+
+// writeResponse function to write at logs view, with padded line numbers for consistent indentation
+func (t *Terminal) writeResponse(data interface{}, command, timestamp, elapsed string) {
+	var prettyData string
+	// Try to marshal data as JSON with indentation; fallback to plain text
+	if jsonBytes, err := json.MarshalIndent(data, "", "  "); err == nil {
+		prettyData = string(jsonBytes)
+	} else {
+		prettyData = fmt.Sprintf("%v", data)
+	}
+
+	// add line numbers
+	lines := strings.Split(prettyData, "\n")           // line numbers with 0-padding to each line
+	lineNumWidth := len(fmt.Sprintf("%d", len(lines))) // width based on total line count
+	for i, line := range lines {                       // line numbers with leading 0s for equal width
+		lines[i] = fmt.Sprintf("%0*d: %s", lineNumWidth, i+1, line)
+	}
+	prettyDataWithLineNums := strings.Join(lines, "\n")
+
+	// Write
+	t.app.QueueUpdateDraw(func() {
+		title := command + ": " + timestamp + " duration: " + elapsed // Append new log data to existing content
+		oldTxt := t.logsView.GetText(true)                            // Retrieve the existing content
+		newTxt := oldTxt + NL + title + NL + prettyDataWithLineNums + DIV
+		numSelections := 0
+		go func() {
+			for _, word := range strings.Split(newTxt, " ") {
+				if word == "the" {
+					word = "[#ff0000]the[white]"
+				}
+				if word == "to" {
+					word = fmt.Sprintf(`["%d"]to[""]`, numSelections)
+					numSelections++
+				}
+				fmt.Fprintf(t.logsView, "%s ", word)
+				time.Sleep(200 * time.Millisecond)
+			}
+		}()
+		t.logsView.SetText(newTxt).SetDoneFunc(func(key tcell.Key) {
+			currentSelection := t.logsView.GetHighlights()
+			if key == tcell.KeyEnter {
+				if len(currentSelection) > 0 {
+					t.logsView.Highlight()
+				} else {
+					t.logsView.Highlight("0").ScrollToHighlight()
+				}
+			} else if len(currentSelection) > 0 {
+				index, _ := strconv.Atoi(currentSelection[0])
+				if key == tcell.KeyTab {
+					index = (index + 1) % numSelections
+				} else if key == tcell.KeyBacktab {
+					index = (index - 1 + numSelections) % numSelections
+				} else {
+					return
+				}
+				t.logsView.Highlight(strconv.Itoa(index)).ScrollToHighlight()
+			}
+		}).SetBackgroundColor(tcell.ColorDefault)
+	})
+	t.app.Sync()
+}
+
+// promptBTCAddress will print an input screen for entering a bitcoin address
+func (t *Terminal) promptBTCAddress(addressCh chan<- string) {
+	t.inputAddress.
+		SetLabel("Input address: ").
+>>>>>>> 760e218 (changing textArea to textView)
 		SetFieldWidth(0).
 		SetFieldBackgroundColor(tcell.ColorRebeccaPurple).
 		SetLabelColor(constant.LightBitcoinYellow).
