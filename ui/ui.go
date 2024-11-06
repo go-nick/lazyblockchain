@@ -3,6 +3,7 @@ package ui
 import (
 	"encoding/json"
 	"fmt"
+	"strconv"
 	"strings"
 	"time"
 
@@ -65,7 +66,7 @@ func (t *Terminal) writeLoadingAnimation(done <-chan bool) {
 // writeError will pretty print the error to the logs view
 func (t *Terminal) writeError(err error) {
 	t.app.QueueUpdateDraw(func() {
-		t.logsView.SetText(fmt.Sprintf("Error: %v", err), false).SetBackgroundColor(tcell.ColorDefault)
+		t.logsView.SetText(fmt.Sprintf("Error: %v", err)).SetBackgroundColor(tcell.ColorDefault)
 	})
 	return
 }
@@ -91,9 +92,42 @@ func (t *Terminal) writeResponse(data interface{}, command, timestamp, elapsed s
 	// Write
 	t.app.QueueUpdateDraw(func() {
 		title := command + ": " + timestamp + " duration: " + elapsed // Append new log data to existing content
-		oldTxt := t.logsView.GetText()                                // Retrieve the existing content
+		oldTxt := t.logsView.GetText(true)                            // Retrieve the existing content
 		newTxt := oldTxt + NL + title + NL + prettyDataWithLineNums + DIV
-		t.logsView.SetText(newTxt, false).SetBackgroundColor(tcell.ColorDefault)
+		numSelections := 0
+		go func() {
+			for _, word := range strings.Split(newTxt, " ") {
+				if word == "the" {
+					word = "[#ff0000]the[white]"
+				}
+				if word == "to" {
+					word = fmt.Sprintf(`["%d"]to[""]`, numSelections)
+					numSelections++
+				}
+				fmt.Fprintf(t.logsView, "%s ", word)
+				time.Sleep(200 * time.Millisecond)
+			}
+		}()
+		t.logsView.SetText(newTxt).SetDoneFunc(func(key tcell.Key) {
+			currentSelection := t.logsView.GetHighlights()
+			if key == tcell.KeyEnter {
+				if len(currentSelection) > 0 {
+					t.logsView.Highlight()
+				} else {
+					t.logsView.Highlight("0").ScrollToHighlight()
+				}
+			} else if len(currentSelection) > 0 {
+				index, _ := strconv.Atoi(currentSelection[0])
+				if key == tcell.KeyTab {
+					index = (index + 1) % numSelections
+				} else if key == tcell.KeyBacktab {
+					index = (index - 1 + numSelections) % numSelections
+				} else {
+					return
+				}
+				t.logsView.Highlight(strconv.Itoa(index)).ScrollToHighlight()
+			}
+		}).SetBackgroundColor(tcell.ColorDefault)
 	})
 	t.app.Sync()
 }
