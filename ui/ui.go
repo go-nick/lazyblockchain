@@ -105,10 +105,14 @@ func (m *Monitor) Loading(loadCH <-chan bool) {
 }
 
 <<<<<<< HEAD
+<<<<<<< HEAD
+=======
+>>>>>>> 829e0d4 (Still thinking what is best software architecture here)
 // CreateInput will print an input screen for entering a bitcoin address
 func (m *Monitor) CreateInput(label string) {
 	m.Input.
 		SetLabel("Input[" + label + "]: ").
+<<<<<<< HEAD
 =======
 // writeError will pretty print the error to the logs view
 func (t *Terminal) writeError(err error) {
@@ -184,6 +188,8 @@ func (t *Terminal) promptBTCAddress(addressCh chan<- string) {
 	t.inputAddress.
 		SetLabel("Input address: ").
 >>>>>>> 760e218 (changing textArea to textView)
+=======
+>>>>>>> 829e0d4 (Still thinking what is best software architecture here)
 		SetFieldWidth(0).
 		SetFieldBackgroundColor(tcell.ColorRebeccaPurple).
 		SetLabelColor(constant.LightBitcoinYellow).
