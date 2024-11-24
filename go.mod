@@ -3,6 +3,7 @@ module lazyblockchain
 go 1.21.5
 
 require (
+	github.com/atotto/clipboard v0.1.4
 	github.com/decred/dcrd/rpcclient/v8 v8.0.1
 	github.com/gdamore/tcell/v2 v2.7.1
 	github.com/rivo/tview v0.0.0-20241030223020-e34b54cd4c27
