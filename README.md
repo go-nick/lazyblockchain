@@ -1,21 +1,76 @@
 # LazyBlockchain
 
-### Quick Run
+LazyBlockchain is a **Command-Line Interface (CLI) Terminal User Interface (TUI) application** designed to interact seamlessly with Bitcoin nodes. It allows users to send JSON-RPC commands and view blockchain data in an intuitive and interactive terminal-based interface.
 
-at: `node/rpc.go`
+![lazyblockchain](docs/lazyblockchain.jpg)
 
-Change this for your target node:
-```
-	connCfg := &rpcclient.ConnConfig{
-		Host:         "192.168.1.10:8332",
-		User:         "lobo",
-		Pass:         "123456",
-		HTTPPostMode: true, // Bitcoin Core only supports HTTP POST mode
-		DisableTLS:   true, // Bitcoin Core does not use TLS by default
-	}
+---
+
+## Features
+
+- **Command-Line Options**:
+  - `--host="<node_ip>"`
+  - `--port="<node_port(default: 8332)>"`
+  - `--user="<node_user>"`
+  - `--password="<node_password>"`
+
+  If command-line options are not provided `LazyBlockchain` will check for the configuration at `~/.bitcoin/bitcoin.conf`
+- **JSON-RPC Integration**:
+  - Supports all JSON-RPC methods exposed by Bitcoin nodes, such as:
+    - `getblockchaininfo`
+    - `getblockhash`
+    - `getchaintips`
+    - and more!
+- **Interactive TUI**:
+  - A terminal interface for real-time interaction and visualization.
+  - Displays logs and results in a clean and navigable UI.
+  - Shortcuts for working with JSON.
+
+
+---
+
+## Installation
+
+### Prerequisites
+- [Go](https://go.dev/) 1.21.5 or higher
+- A running Bitcoin node with RPC enabled (e.g., Bitcoin Core).
+
+### Clone the Repository
+```bash
+git clone https://github.com/nicholasinatel/lazyblockchain.git
+cd lazyblockchain
 ```
 
-At the root of the project:
+### Running
+```bash
+make run
 ```
-go run .
+
+> Check: make help
+
+---
+
+### Developer's help
+
+VSCode launch.json example for debugging:
+```json
+{
+    "version": "0.2.0",
+    "configurations": [
+        {
+            "name": "lazyblockchain",
+            "type": "go",
+            "request": "launch",
+            "mode": "auto",
+            "program": "${workspaceFolder}",
+                        "args": [
+                            "--host", "***.***.***.***",
+                            "--port", "***",
+                            "--user", "***",
+                            "--password", "***"
+                        ],
+            "console": "integratedTerminal"
+        }
+    ]
+}
 ```

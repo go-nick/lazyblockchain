@@ -1,50 +1,11 @@
 package node
 
 import (
-	"context"
 	"encoding/json"
 	"fmt"
 	"log"
 	"strconv"
-
-	"github.com/decred/dcrd/rpcclient/v8"
 )
-
-// RPCCommandFunc TODO: Doc this
-type RPCCommandFunc func(args ...string) (map[string]interface{}, error)
-
-// RPC ...
-type RPC struct {
-	CmdCache map[string]RPCCommandFunc
-	Client   *rpcclient.Client
-	ctx      context.Context
-}
-
-// ConnectRPC ...
-func ConnectRPC() (*RPC, error) {
-	/** Configure RPC client options
-	* bitcoin-cli -rpcconnect=192.168.1.10 -rpcport=8332 -rpcuser=lobo -rpcpassword=123456 getblockchaininfo
-	**/
-	connCfg := &rpcclient.ConnConfig{
-		Host:         "192.168.1.10:8332",
-		User:         "lobo",
-		Pass:         "123456",
-		HTTPPostMode: true, // Bitcoin Core only supports HTTP POST mode
-		DisableTLS:   true, // Bitcoin Core does not use TLS by default
-	}
-
-	// Initialize client instance
-	rpcClient, err := rpcclient.New(connCfg, nil)
-	if err != nil {
-		return nil, err
-	}
-	rpc := &RPC{
-		Client: rpcClient,
-		ctx:    context.Background(),
-	}
-
-	return rpc, nil
-}
 
 // MockResponse ...
 func (r *RPC) MockResponse() (map[string]interface{}, error) {
