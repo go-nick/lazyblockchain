@@ -50,7 +50,7 @@ make run
 
 ---
 
-### Developer's help
+### Debugging
 
 VSCode launch.json example for debugging:
 ```json
@@ -103,3 +103,15 @@ VSCode launch.json example for debugging:
     ]
 }
 ```
+### Contributing
+Contributions welcome! Please fork the repository and create a pull request for any new features or bug fixes.
+Try to follow Go's best practices.
+
+### License
+I still need to read about this, but this stuff is free!
+
+### Acknowledgments
+[Bitcoin](https://bitcoincore.org) Core for its robust JSON-RPC API.
+[tview](https://github.com/rivo/tview) for creating the TUI components.
+[tcell](https://github.com/gdamore/tcell) for being awesome.
+The Go community for its fantastic libraries and support.
