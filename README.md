@@ -74,3 +74,32 @@ VSCode launch.json example for debugging:
     ]
 }
 ```
+
+> Check: make help
+
+---
+
+### Developer's help
+
+VSCode launch.json example for debugging:
+```json
+{
+    "version": "0.2.0",
+    "configurations": [
+        {
+            "name": "lazyblockchain",
+            "type": "go",
+            "request": "launch",
+            "mode": "auto",
+            "program": "${workspaceFolder}",
+                        "args": [
+                            "--host", "***.***.***.***",
+                            "--port", "***",
+                            "--user", "***",
+                            "--password", "***"
+                        ],
+            "console": "integratedTerminal"
+        }
+    ]
+}
+```
