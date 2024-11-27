@@ -3,6 +3,7 @@ module lazyblockchain
 go 1.21.5
 
 require (
+	github.com/atotto/clipboard v0.1.4
 	github.com/decred/dcrd/rpcclient/v8 v8.0.1
 	github.com/gdamore/tcell/v2 v2.7.1
 	github.com/rivo/tview v0.0.0-20241030223020-e34b54cd4c27
@@ -31,10 +32,13 @@ require (
 	github.com/decred/slog v1.2.0 // indirect
 	github.com/gdamore/encoding v1.0.0 // indirect
 	github.com/gorilla/websocket v1.5.1 // indirect
+	github.com/inconshreveable/mousetrap v1.1.0 // indirect
 	github.com/klauspost/cpuid/v2 v2.0.9 // indirect
 	github.com/lucasb-eyer/go-colorful v1.2.0 // indirect
 	github.com/mattn/go-runewidth v0.0.15 // indirect
 	github.com/rivo/uniseg v0.4.7 // indirect
+	github.com/spf13/cobra v1.8.1 // indirect
+	github.com/spf13/pflag v1.0.5 // indirect
 	golang.org/x/net v0.17.0 // indirect
 	golang.org/x/sys v0.20.0 // indirect
 	golang.org/x/term v0.17.0 // indirect
