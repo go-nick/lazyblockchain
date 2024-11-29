@@ -48,10 +48,11 @@ func (r *RPC) GetBestBlockHash() (map[string]interface{}, error) {
 }
 
 // GetBlock fetches details of a specific block by its hash
-func (r *RPC) GetBlock(blockHash string) (map[string]interface{}, error) {
+func (r *RPC) GetBlock(args ...string) (map[string]interface{}, error) {
+	blockhash := args[0]
 	// Prepare the parameters for the request
 	params := []json.RawMessage{
-		json.RawMessage(fmt.Sprintf(`"%s"`, blockHash)),
+		json.RawMessage(fmt.Sprintf(`"%s"`, blockhash)),
 	}
 
 	result, err := r.Client.RawRequest(r.ctx, "getblock", params)
@@ -104,7 +105,8 @@ func (r *RPC) GetBlockCount() (map[string]interface{}, error) {
 }
 
 // GetBlockFilter retrieve a BIP 157 content filter for a particular block.
-func (r *RPC) GetBlockFilter(blockHash, filterType string) (map[string]interface{}, error) {
+func (r *RPC) GetBlockFilter(args ...string) (map[string]interface{}, error) {
+	blockHash, filterType := args[0], args[1]
 	var response map[string]interface{} = make(map[string]interface{})
 	// Prepare the parameters for the request
 	params := []json.RawMessage{
@@ -126,7 +128,8 @@ func (r *RPC) GetBlockFilter(blockHash, filterType string) (map[string]interface
 }
 
 // GetBlockHash returns hash of block in best-block-chain at height provided
-func (r *RPC) GetBlockHash(height string) (map[string]interface{}, error) {
+func (r *RPC) GetBlockHash(args ...string) (map[string]interface{}, error) {
+	height := args[0]
 	var response map[string]interface{} = make(map[string]interface{})
 
 	heightInt, err := strconv.ParseInt(height, 10, 64)
@@ -157,7 +160,8 @@ func (r *RPC) GetBlockHash(height string) (map[string]interface{}, error) {
 }
 
 // GetBlockHeader returns an Object with information about blockheader ‘hash’.
-func (r *RPC) GetBlockHeader(blockHash string) (map[string]interface{}, error) {
+func (r *RPC) GetBlockHeader(args ...string) (map[string]interface{}, error) {
+	blockHash := args[0]
 	var response map[string]interface{} = make(map[string]interface{})
 
 	// Prepare the parameters for the request
@@ -181,7 +185,8 @@ func (r *RPC) GetBlockHeader(blockHash string) (map[string]interface{}, error) {
 // TODO: Implement optional argument #2
 // GetBlockStats Compute per block statistics for a given window. All amounts are in satoshis.
 // It won’t work for some heights with pruning.
-func (r *RPC) GetBlockStats(hashOrHeight string) (map[string]interface{}, error) {
+func (r *RPC) GetBlockStats(args ...string) (map[string]interface{}, error) {
+	hashOrHeight := args[0]
 	var response map[string]interface{} = make(map[string]interface{})
 
 	// Prepare the parameters for the request
@@ -224,7 +229,8 @@ func (r *RPC) GetChainTips() (map[string]interface{}, error) {
 }
 
 // GetChainTxStats Compute statistics about the total number and rate of transactions in the chain.
-func (r *RPC) GetChainTxStats(nblocks string) (map[string]interface{}, error) {
+func (r *RPC) GetChainTxStats(args ...string) (map[string]interface{}, error) {
+	nblocks := args[0]
 	response := make(map[string]interface{})
 
 	// TODO: add option of no parameter provided passing nil as params
@@ -254,10 +260,11 @@ func (r *RPC) GetChainTxStats(nblocks string) (map[string]interface{}, error) {
 
 // ScanTxOutSet EXPERIMENTAL!
 // Scans the unspent transaction output set for entries that match certain output descriptors.
-func (r *RPC) ScanTxOutSet(addr string) (map[string]interface{}, error) {
+func (r *RPC) ScanTxOutSet(args ...string) (map[string]interface{}, error) {
+	address := args[0]
 	response := make(map[string]interface{})
 
-	desc := fmt.Sprintf(`"addr(%s)"`, addr)
+	desc := fmt.Sprintf(`"addr(%s)"`, address)
 	params := []json.RawMessage{
 		json.RawMessage(`"start"`),                           // Action
 		json.RawMessage(fmt.Sprintf(`[{"desc": %s}]`, desc)), // Descriptor as JSON
@@ -265,7 +272,7 @@ func (r *RPC) ScanTxOutSet(addr string) (map[string]interface{}, error) {
 
 	result, err := r.Client.RawRequest(r.ctx, "scantxoutset", params)
 	if err != nil {
-		err = fmt.Errorf("addr: %s - error: %w", addr, err)
+		err = fmt.Errorf("addr: %s - error: %w", address, err)
 		return nil, err
 	}
 

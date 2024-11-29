@@ -1,11 +1,8 @@
 package terminal
 
 import (
-	"lazyblockchain/constant"
-
 	"github.com/atotto/clipboard"
 	"github.com/gdamore/tcell/v2"
-	"github.com/rivo/tview"
 )
 
 // Shortcuts sets General Shortcuts
@@ -14,36 +11,8 @@ func (i *Instance) Shortcuts() {
 		switch event.Key() {
 
 		// input shortcuts
-		case tcell.KeyEnter:
-			if i.Monitor.Input.HasFocus() {
-				i.inputCH <- i.Monitor.Input.GetText()
-				close(i.inputCH)
-				i.Monitor.DefaultLayout()
-				return nil
-			}
-
-			for label, form := range i.Monitor.Form {
-				if form.HasFocus() {
-					switch label {
-					case constant.FormBlockFilter:
-						f1 := form.GetFormItem(0).(*tview.InputField).GetText()
-						f2 := form.GetFormItem(1).(*tview.InputField).GetText()
-						i.formCH <- map[string]string{
-							"blockhash":  f1,
-							"filtertype": f2,
-						}
-						close(i.formCH)
-						i.Monitor.DefaultLayout()
-						return nil
-					}
-				}
-			}
-
-		case tcell.KeyEsc:
-			if i.Monitor.Input.HasFocus() {
-				close(i.inputCH)
-				close(i.resultCH)
-				i.Monitor.DefaultLayout()
+		case tcell.KeyEnter, tcell.KeyEsc:
+			if ev := i.enterEscInputForm(event); ev == nil {
 				return nil
 			}
 
@@ -80,4 +49,36 @@ func (i *Instance) Shortcuts() {
 
 		return event
 	})
+}
+
+func (i *Instance) enterEscInputForm(event *tcell.EventKey) *tcell.EventKey {
+	key := event.Key()
+
+	for method, input := range i.Monitor.Inputs {
+		if input.Focus {
+			if key == tcell.KeyEnter {
+				i.workerSendInput(method)
+			}
+			if key == tcell.KeyEsc {
+				i.stopWorker(method)
+			}
+			i.Monitor.DefaultLayout()
+			return nil
+		}
+	}
+
+	for method, form := range i.Monitor.Forms {
+		if form.Focus {
+			if key == tcell.KeyEnter {
+				i.workerSendForm(method)
+			}
+			if key == tcell.KeyEsc {
+				i.stopWorker(method)
+			}
+			i.Monitor.DefaultLayout()
+			return nil
+		}
+	}
+
+	return event
 }
