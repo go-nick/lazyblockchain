@@ -104,36 +104,6 @@ func (m *Monitor) Loading(loadCH <-chan bool) {
 	}
 }
 
-// CreateInput will print an input screen for entering a bitcoin address
-func (m *Monitor) CreateInput(label string) {
-	m.Input.
-		SetLabel("Input[" + label + "]: ").
-		SetFieldWidth(0).
-		SetFieldBackgroundColor(tcell.ColorRebeccaPurple).
-		SetLabelColor(constant.LightBitcoinYellow).
-		SetBorderColor(constant.BitcoinYellow).
-		SetTitleColor(constant.LimeGreen).
-		SetTitle(" input mode ").
-		SetDrawFunc(func(screen tcell.Screen, x int, y int, width int, height int) (int, int, int, int) {
-			// Draw a horizontal line across the middle of the box.
-			centerY := y + height/5
-			for cx := x + 1; cx < x+width-1; cx++ {
-				screen.SetContent(cx, centerY, tview.BoxDrawingsLightHorizontal, nil, tcell.StyleDefault.Foreground(tcell.ColorWhite))
-			}
-
-			// Write some text along the horizontal line.
-			tview.Print(screen, "Finish Entry (Enter); Cancel (Esc) ", x+1, centerY-1, width-2, tview.AlignCenter, tcell.ColorYellow)
-
-			// Space for other content.
-			return x + 1, centerY + 1, width - 2, height - (centerY + 1 - y)
-		})
-
-	m.App.SetRoot(m.Input, true)
-	m.SyncFocus(m.Input, true)
-
-	return
-}
-
 // SyncFocus will change the focus, update the info texts and sync
 func (m *Monitor) SyncFocus(p tview.Primitive, sync bool) {
 	switch p {

@@ -15,8 +15,8 @@ type Monitor struct {
 	View   *View
 	Help   *Help
 	Record *logs.Record
-	Input  *tview.InputField
-	Form   map[string]*tview.Form
+	Inputs map[string]*Input
+	Forms  map[string]*Form
 }
 
 // View holds the main 4 views of the cli app
@@ -25,6 +25,21 @@ type View struct {
 	Logs   *tview.TextView
 	Status *tview.TextView
 	Info   *tview.TextView
+}
+
+// Input wraps tview.InputField
+type Input struct {
+	Method    string
+	Focus     bool
+	Primitive *tview.InputField
+}
+
+// Form wraps tview.Form
+type Form struct {
+	Method     string
+	Focus      bool
+	ItensCount int
+	Primitive  *tview.Form
 }
 
 // Help holds the help support pages with shortcuts
@@ -59,6 +74,9 @@ func Setup(m *Monitor) {
 
 // DefaultLayout of the tview cli app
 func (m *Monitor) DefaultLayout() {
+	m.clearInputs()
+	m.clearForms()
+
 	m.Grid.
 		SetBorder(true).
 		SetBorderColor(tcell.ColorBlack).
@@ -104,4 +122,22 @@ func (m *Monitor) DefaultLayout() {
 		EnableMouse(true)
 
 	m.SyncFocus(m.View.Menu, true)
+}
+
+// clearInputs sets focus of all inputs to false
+func (m *Monitor) clearInputs() {
+	if len(m.Inputs) > 0 {
+		for _, input := range m.Inputs {
+			input.Focus = false
+		}
+	}
+}
+
+// clearForms sets focus of all forms to false
+func (m *Monitor) clearForms() {
+	if len(m.Inputs) > 0 {
+		for _, input := range m.Inputs {
+			input.Focus = false
+		}
+	}
 }
